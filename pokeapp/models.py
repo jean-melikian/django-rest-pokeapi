@@ -41,7 +41,7 @@ class Trainer(models.Model):
 
 class Match(models.Model):
 	match_winner = models.CharField(max_length=255)
-	match_trainers = models.ManyToManyField('Trainer')
+	match_trainers = models.ManyToManyField('Trainer', related_name='match_trainers', blank=True)
 
 
 class PokedexEntry(models.Model):
