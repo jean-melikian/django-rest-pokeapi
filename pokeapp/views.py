@@ -2,6 +2,9 @@ from base64 import b64decode
 
 from django.contrib.auth import authenticate
 from django.http import HttpResponse, JsonResponse
+from django.contrib.auth import authenticate
+from base64 import b64decode
+from .auth import get_or_create_token, get_basic_auth
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.exceptions import ParseError
