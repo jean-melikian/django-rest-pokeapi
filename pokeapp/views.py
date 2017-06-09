@@ -7,8 +7,9 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status, serializers
 from rest_framework.exceptions import ParseError
 from rest_framework.parsers import JSONParser
+from pokeapp.callAPI import call_poke_api
 
-from pokeapp.models import Trainer, Pokemon, Team, Match
+from pokeapp.models import Trainer, Pokemon, Team, Match, PokedexEntry
 from pokeapp.serializers import TrainerSerializer, PokemonSerializer, TeamSerializer, MatchSerializer
 from .auth import get_or_create_token, get_basic_auth, check_request_token
 
@@ -38,6 +39,10 @@ def model_list(request, model_type, serializer_type):
 		serializer = serializer_type(data=data)
 		if serializer.is_valid():
 			serializer.save()
+			# If it's a pokemon we need to put the description of the pokeAPI into the table POKEDEX_ENTRY
+			if model_type == "Pokemon":
+				name = serializer.data['pokemon_name']
+				PokedexEntry.objects.create(PokedexEntry_pokemon=name, PokedexEntry_description=call_poke_api(name))
 			return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
 		else:
 			return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
