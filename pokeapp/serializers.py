@@ -1,12 +1,12 @@
 from rest_framework import serializers
 
-from .models import Pokemon, PokedexEntry, Team, Match, Trainer, Token
+from .models import Pokemon, PokedexEntry, Team, Match, Trainer
 
 
 class PokemonSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Pokemon
-		fields = ('id', 'pokemon_name', 'pokemon_type', 'pokemon_level', 'team_name')
+		fields = ('id', 'pokemon_name', 'pokemon_type', 'pokemon_level')
 
 
 class PokedexEntrySerializer(serializers.ModelSerializer):
@@ -32,8 +32,8 @@ class TrainerSerializer(serializers.ModelSerializer):
 
 
 class MatchSerializer(serializers.ModelSerializer):
-	trainers = TrainerSerializer(read_only=True, many=True)
+	match_trainers = serializers.StringRelatedField(many=True)
 
 	class Meta:
 		model = Match
-		fields = ('id', 'match_winner')
+		fields = ('id', 'match_winner', 'match_trainers')
