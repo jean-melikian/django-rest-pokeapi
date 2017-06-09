@@ -1,8 +1,10 @@
-from django.http import HttpResponse, JsonResponse
-from django.contrib.auth import authenticate
 from base64 import b64decode
+
+from django.contrib.auth import authenticate
+from django.db import models
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.exceptions import ParseError
 from rest_framework.parsers import JSONParser
 
@@ -11,13 +13,18 @@ from pokeapp.serializers import TrainerSerializer, PokemonSerializer, TeamSerial
 from .auth import get_or_create_token, get_basic_auth, check_request_token
 
 
-@csrf_exempt
-def trainer_list(request):
+def model_list(request, model_type, serializer_type):
 	is_token_valid = check_request_token(request)
 
+	print(request.method, request.body)
+
+	if not issubclass(model_type, models.Model) or not issubclass(serializer_type, serializers.ModelSerializer):
+		return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 	if request.method == 'GET':
-		trainer = Trainer.objects.all()
-		serializer = TrainerSerializer(trainer, many=True)
+		obj = model_type.objects.all()
+
+		serializer = serializer_type(obj, many=True)
 		return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
 
 	elif request.method == 'POST':
@@ -28,7 +35,7 @@ def trainer_list(request):
 			data = JSONParser().parse(request)
 		except ParseError:
 			return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-		serializer = TrainerSerializer(data=data)
+		serializer = serializer_type(data=data)
 		if serializer.is_valid():
 			serializer.save()
 			return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
@@ -36,199 +43,84 @@ def trainer_list(request):
 			return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 	else:
 		return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+def model_details(request, pk, model_type, serializer_type):
+	is_token_valid = check_request_token(request)
+
+	if not issubclass(model_type, models.Model) or not issubclass(serializer_type, serializers.ModelSerializer):
+		return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+	try:
+		obj = model_type.objects.get(pk=pk)
+	except model_type.DoesNotExist:
+		return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+	if request.method == 'GET':
+		serializer = serializer_type(obj)
+		return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+
+	elif request.method == 'PUT':
+		if not is_token_valid:
+			return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+		try:
+			data = JSONParser().parse(request)
+		except ParseError:
+			return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+		serializer = serializer_type(obj, data=data)
+		if serializer.is_valid():
+			serializer.save()
+			return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+		else:
+			return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+	elif request.method == 'DELETE':
+		if not is_token_valid:
+			return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+		obj.delete()
+		return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+	else:
+		return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@csrf_exempt
+def trainer_list(request):
+	return model_list(request, Trainer, TrainerSerializer)
 
 
 @csrf_exempt
 def trainer_details(request, pk):
-	is_token_valid = check_request_token(request)
-
-	try:
-		trainer = Trainer.objects.get(pk=pk)
-	except Trainer.DoesNotExist:
-		return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-
-	if request.method == 'GET':
-		serializer = TrainerSerializer(trainer)
-		return JsonResponse(serializer.data, status=status.HTTP_200_OK)
-
-	elif request.method == 'PUT':
-		if not is_token_valid:
-			return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
-		try:
-			data = JSONParser().parse(request)
-		except ParseError:
-			return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-		serializer = TrainerSerializer(trainer, data=data)
-		if serializer.is_valid():
-			serializer.save()
-			return JsonResponse(serializer.data, status=status.HTTP_200_OK)
-		else:
-			return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-	elif request.method == 'DELETE':
-		if not is_token_valid:
-			return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
-
-		trainer.delete()
-		return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-	else:
-		return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+	return model_details(request, pk, Trainer, TrainerSerializer)
 
 
 @csrf_exempt
 def pokemon_list(request):
-	if request.method == 'GET':
-		pokemon = Pokemon.objects.all()
-		serializer = PokemonSerializer(pokemon, many=True)
-		return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
-
-	elif request.method == 'POST':
-		try:
-			data = JSONParser().parse(request)
-		except ParseError:
-			return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-		serializer = PokemonSerializer(data=data)
-		if serializer.is_valid():
-			serializer.save()
-			return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
-		else:
-			return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-	else:
-		return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+	return model_list(request, Pokemon, PokemonSerializer)
 
 
 @csrf_exempt
 def pokemon_details(request, pk):
-	try:
-		pokemon = Pokemon.objects.get(pk=pk)
-	except Pokemon.DoesNotExist:
-		return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-
-	if request.method == 'GET':
-		serializer = PokemonSerializer(pokemon)
-		return JsonResponse(serializer.data, status=status.HTTP_200_OK)
-
-	elif request.method == 'PUT':
-		try:
-			data = JSONParser().parse(request)
-		except ParseError:
-			return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-		serializer = PokemonSerializer(pokemon, data=data)
-		if serializer.is_valid():
-			serializer.save()
-			return JsonResponse(serializer.data, status=status.HTTP_200_OK)
-		else:
-			return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-	elif request.method == 'DELETE':
-		pokemon.delete()
-		return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-	else:
-		return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+	return model_details(request, pk, Pokemon, PokemonSerializer)
 
 
 @csrf_exempt
 def team_list(request):
-	if request.method == 'GET':
-		team = Team.objects.all()
-		serializer = TeamSerializer(team, many=True)
-		return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
-
-	elif request.method == 'POST':
-		try:
-			data = JSONParser().parse(request)
-		except ParseError:
-			return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-		serializer = TeamSerializer(data=data)
-		if serializer.is_valid():
-			serializer.save()
-			return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
-		else:
-			return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-	else:
-		return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+	return model_list(request, Team, TeamSerializer)
 
 
 @csrf_exempt
 def team_details(request, pk):
-	try:
-		team = Team.objects.get(pk=pk)
-	except Team.DoesNotExist:
-		return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-
-	if request.method == 'GET':
-		serializer = TeamSerializer(team)
-		return JsonResponse(serializer.data, status=status.HTTP_200_OK)
-
-	elif request.method == 'PUT':
-		try:
-			data = JSONParser().parse(request)
-		except ParseError:
-			return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-		serializer = TeamSerializer(team, data=data)
-		if serializer.is_valid():
-			serializer.save()
-			return JsonResponse(serializer.data, status=status.HTTP_200_OK)
-		else:
-			return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-	elif request.method == 'DELETE':
-		team.delete()
-		return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-	else:
-		return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+	return model_details(request, pk, Team, TeamSerializer)
 
 
 @csrf_exempt
 def match_list(request):
-	if request.method == 'GET':
-		match = Match.objects.all()
-		serializer = MatchSerializer(match, many=True)
-		return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
-
-	elif request.method == 'POST':
-		try:
-			data = JSONParser().parse(request)
-		except ParseError:
-			return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-		serializer = MatchSerializer(data=data)
-		if serializer.is_valid():
-			serializer.save()
-			return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
-		else:
-			return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-	else:
-		return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+	return model_list(request, Match, MatchSerializer)
 
 
 @csrf_exempt
 def match_details(request, pk):
-	try:
-		match = Match.objects.get(pk=pk)
-	except Match.DoesNotExist:
-		return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-
-	if request.method == 'GET':
-		serializer = MatchSerializer(match)
-		return JsonResponse(serializer.data, status=status.HTTP_200_OK)
-
-	elif request.method == 'PUT':
-		try:
-			data = JSONParser().parse(request)
-		except ParseError:
-			return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-		serializer = MatchSerializer(match, data=data)
-		if serializer.is_valid():
-			serializer.save()
-			return JsonResponse(serializer.data, status=status.HTTP_200_OK)
-		else:
-			return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-	elif request.method == 'DELETE':
-		match.delete()
-		return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-	else:
-		return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+	return model_details(request, pk, Match, MatchSerializer)
 
 
 @csrf_exempt
