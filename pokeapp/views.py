@@ -1,4 +1,7 @@
 from django.http import HttpResponse, JsonResponse
+from django.contrib.auth import authenticate
+from base64 import b64decode
+from .auth import get_or_create_token, get_basic_auth
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.exceptions import ParseError
@@ -59,3 +62,16 @@ def trainer_details(request, pk):
 		return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 	else:
 		return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+
+@csrf_exempt
+def login(request):
+	basic = get_basic_auth(request)
+	if basic is not None:
+		log = b64decode(bytes(basic, 'ascii')).decode('ascii').split(';')
+		user = authenticate(username=log[0], password=log[1])
+		if user is not None:
+			token = get_or_create_token(user)
+			return JsonResponse(data={'token': token.hash})
+	return HttpResponse(status=status.HTTP_400_BAD_REQUEST)

@@ -1,4 +1,6 @@
 from django.db import models
+from datetime import timedelta
+from django.utils import timezone
 
 
 class Pokemon(models.Model):
@@ -43,8 +45,21 @@ class Match(models.Model):
 
 
 class PokedexEntry(models.Model):
-    PokedexEntry_pokemon = models.OneToOneField(
-        'Pokemon',
-        primary_key=True,
-    )
-    PokedexEntry_decription = models.CharField(max_length=255)
+	PokedexEntry_pokemon = models.OneToOneField(
+		'Pokemon',
+		primary_key=True,
+	)
+	PokedexEntry_decription = models.CharField(max_length=255)
+
+
+def get_expiration_date():
+	return timezone.now() + timedelta(days=1)
+
+
+class Token(models.Model):
+	user = models.OneToOneField('auth.user', on_delete=models.CASCADE, unique=True)
+	hash = models.CharField(max_length=255)
+	expiration_date = models.DateTimeField(default=get_expiration_date())
+
+	def is_expired(self):
+		return self.expiration_date < timezone.now()
