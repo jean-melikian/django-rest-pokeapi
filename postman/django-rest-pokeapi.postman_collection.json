@@ -1,0 +1,215 @@
+{
+	"variables": [],
+	"info": {
+		"name": "django-rest-pokeapi",
+		"_postman_id": "362ec5db-06e5-7e90-418e-29baabc50ec3",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"description": "",
+			"item": [
+				{
+					"name": "GET login",
+					"request": {
+						"url": "http://localhost:8000/pokeapp/login",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46cG9rZWFwcGFkbWlu",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PokedexEntry",
+			"description": "",
+			"item": []
+		},
+		{
+			"name": "Pokemon",
+			"description": "",
+			"item": [
+				{
+					"name": "GET pokemons",
+					"request": {
+						"url": "{{endpoint}}/pokemons/",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "POST pokemons",
+					"request": {
+						"url": "{{endpoint}}/pokemons/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic 2c2f609c67e90c833db22592c519f9aae59c4af761ec6b521ca4190a283e5cf0",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"pokemon_name\": \"Pikachu\",\n\t\"pokemon_type\": \"Electrik\",\n\t\"pokemon_level\": 5,\n\t\"pokemon_team\": []\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Teams",
+			"description": "",
+			"item": [
+				{
+					"name": "GET teams",
+					"request": {
+						"url": "{{endpoint}}/teams/",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "POST teams",
+					"request": {
+						"url": "{{endpoint}}/teams/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic 2c2f609c67e90c833db22592c519f9aae59c4af761ec6b521ca4190a283e5cf0",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"team_name\": \"MesGarsSurs\",\n    \"team_date\": \"2017-06-09T22:26:08Z\",\n    \n    \"team_pokemons\": []\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Trainers",
+			"description": "",
+			"item": [
+				{
+					"name": "GET trainers",
+					"request": {
+						"url": "{{endpoint}}/trainers",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "POST trainers",
+					"request": {
+						"url": "http://127.0.0.1:8000/pokeapp/trainers/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic 2c2f609c67e90c833db22592c519f9aae59c4af761ec6b521ca4190a283e5cf0",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"trainer_name\": \"Bob\",\n\t\"trainer_age\": 42,\n\t\"trainer_teams\": []\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "PUT trainers",
+					"request": {
+						"url": "{{endpoint}}/trainers/1/",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic 2c2f609c67e90c833db22592c519f9aae59c4af761ec6b521ca4190a283e5cf0",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"trainer_name\": \"Ozone\",\n\t\"trainer_age\": 18,\n\t\"trainer_teams\": []\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE trainers",
+					"request": {
+						"url": "{{endpoint}}/trainers/1/",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic 2c2f609c67e90c833db22592c519f9aae59c4af761ec6b521ca4190a283e5cf0",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
