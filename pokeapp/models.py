@@ -7,7 +7,7 @@ class Pokemon(models.Model):
 	pokemon_name = models.CharField(max_length=255)
 	pokemon_type = models.CharField(max_length=255)
 	pokemon_level = models.IntegerField(default=0)
-	pokemon_team = models.ForeignKey('Team', related_name='team_pokemons', on_delete=models.CASCADE)
+	pokemon_team = models.ForeignKey('Team', related_name='team_pokemons', null=True, blank=True, on_delete=models.CASCADE)
 
 	def __str__(self):
 		return self.pokemon_name
@@ -57,7 +57,7 @@ def get_expiration_date():
 
 
 class Token(models.Model):
-	user = models.OneToOneField('auth.user', on_delete=models.CASCADE, unique=True)
+	user = models.OneToOneField('auth.User', on_delete=models.CASCADE, unique=True)
 	hash = models.CharField(max_length=255)
 	expiration_date = models.DateTimeField(default=get_expiration_date())
 

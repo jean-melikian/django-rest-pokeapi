@@ -16,11 +16,12 @@ class PokedexEntrySerializer(serializers.ModelSerializer):
 
 
 class TeamSerializer(serializers.ModelSerializer):
-	team_pokemons = serializers.StringRelatedField(many=True)
+	team_pokemons = serializers.PrimaryKeyRelatedField(queryset=Pokemon.objects.all(), many=True)
+	team_trainer = serializers.PrimaryKeyRelatedField(queryset=Trainer.objects.all())
 
 	class Meta:
 		model = Team
-		fields = ('id', 'team_name', 'team_date', 'team_pokemons')
+		fields = ('id', 'team_name', 'team_date', 'team_pokemons', 'team_trainer')
 
 
 class TrainerSerializer(serializers.ModelSerializer):
@@ -32,7 +33,7 @@ class TrainerSerializer(serializers.ModelSerializer):
 
 
 class MatchSerializer(serializers.ModelSerializer):
-	match_trainers = serializers.StringRelatedField(many=True)
+	match_trainers = serializers.PrimaryKeyRelatedField(queryset=Trainer.objects.all(), many=True)
 
 	class Meta:
 		model = Match
