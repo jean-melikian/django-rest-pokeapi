@@ -19,4 +19,7 @@ urlpatterns = [
 	url(r'^matchs/$', views.match_list, name='match-list'),
 	url(r'^matchs/(?P<pk>[0-9]+)/$', views.match_details, name='match-details'),
 
+	url(r'^pokedexentry/$', views.pokedexentry_list, name='pokedexentry-list'),
+	url(r'^pokedexentry/(?P<pk>[A-Za-z]+)/$', views.pokedexentry_details, name='pokedexentry-details'),
+
 ]

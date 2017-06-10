@@ -12,7 +12,7 @@ class PokemonSerializer(serializers.ModelSerializer):
 class PokedexEntrySerializer(serializers.ModelSerializer):
 	class Meta:
 		model = PokedexEntry
-		fields = ('pokemon_name', 'description')
+		fields = ('pokedexentry_pokemon', 'pokedexentry_decription')
 
 
 class TeamSerializer(serializers.ModelSerializer):

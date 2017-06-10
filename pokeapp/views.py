@@ -10,7 +10,8 @@ from rest_framework.parsers import JSONParser
 from pokeapp.callAPI import call_poke_api
 
 from pokeapp.models import Trainer, Pokemon, Team, Match, PokedexEntry
-from pokeapp.serializers import TrainerSerializer, PokemonSerializer, TeamSerializer, MatchSerializer
+from pokeapp.serializers import TrainerSerializer, PokemonSerializer, TeamSerializer, MatchSerializer, \
+	PokedexEntrySerializer
 from .auth import get_or_create_token, get_basic_auth, check_request_token
 
 
@@ -44,7 +45,7 @@ def model_list(request, model_type, serializer_type):
 				obj = Pokemon.objects.earliest("id")
 				name = serializer.data['pokemon_name']
 
-				PokedexEntry.objects.create(PokedexEntry_pokemon=obj, PokedexEntry_description=call_poke_api(name.lower()))
+				PokedexEntry.objects.create(pokedexentry_pokemon=obj, pokedexentry_decription=call_poke_api(name.lower()))
 
 			return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
 		else:
@@ -141,3 +142,11 @@ def login(request):
 			token = get_or_create_token(user)
 			return JsonResponse(data={'token': token.hash})
 	return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+
+
+def pokedexentry_list(request):
+	return model_list(request, PokedexEntry, PokedexEntrySerializer)
+
+
+def pokedexentry_details(request, pk):
+	return model_details(request, pk, PokedexEntry, PokedexEntrySerializer)

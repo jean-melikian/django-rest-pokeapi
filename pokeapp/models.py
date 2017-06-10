@@ -7,7 +7,7 @@ class Pokemon(models.Model):
 	pokemon_name = models.CharField(max_length=255)
 	pokemon_type = models.CharField(max_length=255)
 	pokemon_level = models.IntegerField(default=0)
-	pokemon_team = models.ForeignKey('Team', related_name='team_pokemons', null=True, on_delete=models.CASCADE)
+	pokemon_team = models.ForeignKey('Team', related_name='team_pokemons', on_delete=models.CASCADE)
 
 	def __str__(self):
 		return self.pokemon_name
@@ -19,7 +19,7 @@ class Pokemon(models.Model):
 class Team(models.Model):
 	team_name = models.CharField(max_length=255)
 	team_date = models.DateTimeField('date published')
-	team_trainer = models.ForeignKey('Trainer', related_name='trainer_teams', null=True, on_delete=models.CASCADE)
+	team_trainer = models.ForeignKey('Trainer', related_name='trainer_teams', on_delete=models.CASCADE)
 
 	def __str__(self):
 		return self.team_name
@@ -45,11 +45,11 @@ class Match(models.Model):
 
 
 class PokedexEntry(models.Model):
-	PokedexEntry_pokemon = models.OneToOneField(
+	pokedexentry_pokemon = models.OneToOneField(
 		'Pokemon',
 		primary_key=True,
 	)
-	PokedexEntry_decription = models.CharField(max_length=255)
+	pokedexentry_decription = models.CharField(max_length=255)
 
 
 def get_expiration_date():
