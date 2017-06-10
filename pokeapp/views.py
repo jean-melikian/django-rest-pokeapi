@@ -40,9 +40,12 @@ def model_list(request, model_type, serializer_type):
 		if serializer.is_valid():
 			serializer.save()
 			# If it's a pokemon we need to put the description of the pokeAPI into the table POKEDEX_ENTRY
-			if model_type == "Pokemon":
+			if model_type == Pokemon and serializer_type == PokemonSerializer:
+				obj = Pokemon.objects.earliest("id")
 				name = serializer.data['pokemon_name']
-				PokedexEntry.objects.create(PokedexEntry_pokemon=name, PokedexEntry_description=call_poke_api(name))
+
+				PokedexEntry.objects.create(PokedexEntry_pokemon=obj, PokedexEntry_description=call_poke_api(name.lower()))
+
 			return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
 		else:
 			return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
