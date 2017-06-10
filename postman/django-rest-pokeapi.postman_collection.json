@@ -31,9 +31,74 @@
 			]
 		},
 		{
+			"name": "Match",
+			"description": "",
+			"item": [
+				{
+					"name": "GET match",
+					"request": {
+						"url": "{{endpoint}}/matchs",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "POST match",
+					"request": {
+						"url": "{{endpoint}}/matchs/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "{{basicauthtoken}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"match_winner\": \"ozone\",\n\t\"match_trainers\": [\n\t\t\t\"ozone\",\n\t\t\t\"1\"\n\t\t]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "PokedexEntry",
 			"description": "",
-			"item": []
+			"item": [
+				{
+					"name": "GET pokedexentry",
+					"request": {
+						"url": "{{endpoint}}/pokedexentry/",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GET pokemons by pk",
+					"request": {
+						"url": "{{endpoint}}/pokemons/5",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
 		},
 		{
 			"name": "Pokemon",
@@ -69,8 +134,69 @@
 						],
 						"body": {
 							"mode": "raw",
+							"raw": "{\n\t\"pokemon_name\": \"Pikachu\",\n\t\"pokemon_type\": \"elec\",\n\t\"pokemon_level\": 5,\n\t\"pokemon_team\": []\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "PUT pokemon",
+					"request": {
+						"url": "{{endpoint}}/pokemons/3/",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic 2c2f609c67e90c833db22592c519f9aae59c4af761ec6b521ca4190a283e5cf0",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
 							"raw": "{\n\t\"pokemon_name\": \"Pikachu\",\n\t\"pokemon_type\": \"Electrik\",\n\t\"pokemon_level\": 5,\n\t\"pokemon_team\": []\n}"
 						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE pokemon",
+					"request": {
+						"url": "{{endpoint}}/pokemons/3/",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic 2c2f609c67e90c833db22592c519f9aae59c4af761ec6b521ca4190a283e5cf0",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GET pokemons by pk",
+					"request": {
+						"url": "{{endpoint}}/pokemons/5",
+						"method": "GET",
+						"header": [],
+						"body": {},
 						"description": ""
 					},
 					"response": []
@@ -111,8 +237,69 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"team_name\": \"MesGarsSurs\",\n    \"team_date\": \"2017-06-09T22:26:08Z\",\n    \n    \"team_pokemons\": []\n}"
+							"raw": "{\n    \"team_name\": \"MesGarsSurs\",\n    \"team_date\": \"2017-06-09T22:26:08Z\",\n    \"team_trainer\": \"3\",\n    \"team_pokemons\": []\n}"
 						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "PUT teams",
+					"request": {
+						"url": "{{endpoint}}/teams/1/",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic 2c2f609c67e90c833db22592c519f9aae59c4af761ec6b521ca4190a283e5cf0",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"team_name\": \"MesGarsSurs\",\n    \"team_date\": \"2017-06-09T22:26:08Z\",\n    \"team_trainer\": \"3\",\n    \"team_pokemons\": []\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE teams",
+					"request": {
+						"url": "{{endpoint}}/teams/2/",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic 2c2f609c67e90c833db22592c519f9aae59c4af761ec6b521ca4190a283e5cf0",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GET team by pk",
+					"request": {
+						"url": "{{endpoint}}/teams/5",
+						"method": "GET",
+						"header": [],
+						"body": {},
 						"description": ""
 					},
 					"response": []
@@ -205,6 +392,17 @@
 							"mode": "raw",
 							"raw": ""
 						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GET trainer by pk",
+					"request": {
+						"url": "{{endpoint}}/trainers/2",
+						"method": "GET",
+						"header": [],
+						"body": {},
 						"description": ""
 					},
 					"response": []

@@ -149,4 +149,7 @@ def pokedexentry_list(request):
 
 
 def pokedexentry_details(request, pk):
-	return model_details(request, pk, PokedexEntry, PokedexEntrySerializer)
+	if request.method == 'GET':
+		return model_details(request, pk, PokedexEntry, PokedexEntrySerializer)
+	else:
+		return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
